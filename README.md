@@ -3,13 +3,15 @@
 GeneExt takes as input scRNA-seq mapped reads and a gene annotation file (GTF or GFF, any version) and outputs an extended gene annotation file for improved scRNA-seq transcript quantification.
 
 # Installation  
+> **Note:** Only Linux is recommended for this program given the availability of bioinformatics Python libraries.
+
 > **Note:** Users lacking a Conda installation are recommended to install [Miniforge](https://github.com/conda-forge/miniforge#miniforge).
 
 Tool dependencies can be installed with `conda` or `mamba`:
 
 ```bash
 # create environment
-conda env create -n geneext -f environment_full.yaml
+conda env create -n geneext -f environment_updated.yaml
 
 # activate environment
 conda activate geneext
@@ -19,7 +21,7 @@ conda activate geneext
 Once dependencies are installed, try running `GeneExt` with sample data:
 
 ```bash
-python geneext.py -g test_data/annotation.gtf -b test_data/alignments.bam -o result.gtf --peak_perc 0
+python3 geneext.py -g test_data/annotation.gtf -b test_data/alignments.bam -o result.gtf --peak_perc 0
 ```
 Note1: `--peak_perc 0` is set to 0 to disable peak filtering as the test dataset is too small.  
 Note2: `GeneExt` has been mostly tested on `gtf`-formatted files. Please, use `gtf`, if possible. 
