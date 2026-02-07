@@ -1,0 +1,25 @@
+name: geneext
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+dependencies:
+  # Core tools
+  - bedtools
+  - pybedtools  # <--- Added this (installs pre-compiled, no gcc errors!)
+  - gffutils
+  - macs2
+  - samtools
+  - pysam
+
+  # Data Science & Utils
+  - numpy
+  - pandas
+  - scipy       # Added (was in the long list, usually needed if pandas/numpy are there)
+  - rich
+  - tqdm        # Added (was in the pip list, available on conda)
+
+  # PIP packages (Keep this for things not on Conda)
+  - pip
+  - pip:
+    - peaks2utr  # <--- Was in the previous file, likely specific to this project
