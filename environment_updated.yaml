@@ -5,6 +5,9 @@ channels:
   - nodefaults
 dependencies:
   - python=3.10
+  # Compilers (required for pip-installing macs2)
+  - gcc_linux-64
+  - gxx_linux-64
   # Core tools
   - bedtools
   - pybedtools  # <--- Added this (installs pre-compiled, no gcc errors!)
