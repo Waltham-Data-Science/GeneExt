@@ -816,7 +816,7 @@ def extend_gff(db,extend_dictionary,output_file,extension_mode,tag,verbose = Fal
 			
 			######### Write the gene to the file as is ############
 			# CAVE: what to do here?
-			elif not feature.id in extend_dictionary.keys(): # write the gene and all children as they are in the file:
+			elif (not feature.id in extend_dictionary.keys()) or (not n_exons): # write the gene and all children as they are in the file:
 				written_exons = []
 				written_features = [] # this is to check whether the feature has already been written 
 				#if verbose:
@@ -1420,7 +1420,7 @@ def get_featuretypes(infile = None):
 
 
 
-def check_gene_exons(infile, infmt='gtf', output_file='genes_with_missing_exons.txt',verbose = 0):
+def check_gene_exons(infile, infmt='gtf', output_file='genes_with_missing_exons.txt',verbose = 0,skip_genes_with_no_exons=False):
 	"""
 	Load the GTF/GFF file using gffutils and check if every gene has children exons.
 	If exons are missing for any gene, copy CDS features and use them as exons.
@@ -1463,10 +1463,8 @@ def check_gene_exons(infile, infmt='gtf', output_file='genes_with_missing_exons.
 		print(f'WARNING: {len(genes_with_missing_exons)} genes with missing exons! Written to: {output_file}')
 	# Apply fix for genes with missing exons
 	if genes_with_missing_exons:
-		# Since add_missing_exons currently just raises an error, we can just raise a collective error here
-		raise NotImplementedError(f"{len(genes_with_missing_exons)} genes are missing exons! List written to {output_file}. You need to either remove these genes or add exons manually!")
-		#for gene_id in genes_with_missing_exons:
-		#	add_missing_exons(gene_id,db = db)
+		for gene_id in genes_with_missing_exons:
+			add_missing_exons(gene_id,db = db)
 
 def add_gene_features(infile = None,outfile = None, infmt = None,verbose = False):
 	# TODO: for multi-transcript files, the gene should be written only once!
