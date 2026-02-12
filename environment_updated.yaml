@@ -4,6 +4,7 @@ channels:
   - bioconda
   - nodefaults
 dependencies:
+  - python=3.10
   # Core tools
   - bedtools
   - pybedtools  # <--- Added this (installs pre-compiled, no gcc errors!)
