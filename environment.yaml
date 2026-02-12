@@ -10,5 +10,6 @@ dependencies:
   - numpy
   - pandas
   - pysam
+  - pyyaml
   - rich
   - samtools

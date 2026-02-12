@@ -18,6 +18,7 @@ dependencies:
   - scipy       # Added (was in the long list, usually needed if pandas/numpy are there)
   - rich
   - tqdm        # Added (was in the pip list, available on conda)
+  - pyyaml      # Added for geneext.config
 
   # PIP packages (Keep this for things not on Conda)
   - pip
