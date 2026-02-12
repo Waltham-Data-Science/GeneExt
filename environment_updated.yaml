@@ -8,7 +8,6 @@ dependencies:
   - bedtools
   - pybedtools  # <--- Added this (installs pre-compiled, no gcc errors!)
   - gffutils
-  - macs2
   - samtools
   - pysam
 
@@ -24,3 +23,4 @@ dependencies:
   - pip
   - pip:
     - peaks2utr  # <--- Was in the previous file, likely specific to this project
+    - macs2      # <--- Moved to pip to avoid undefined symbol: __log_finite error

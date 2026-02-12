@@ -6,10 +6,12 @@ channels:
 dependencies:
   - bedtools
   - gffutils
-  - macs2
   - numpy
   - pandas
   - pysam
   - pyyaml
   - rich
   - samtools
+  - pip
+  - pip:
+    - macs2
