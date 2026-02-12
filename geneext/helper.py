@@ -1,3 +1,4 @@
+import collections
 import subprocess
 import os
 import re
@@ -1930,3 +1931,109 @@ def check_file_size(filename,verbose = 0):
 #    print(e)
 #except FileNotFoundError as e:
 #    print(e)
+
+def get_chr_names_from_gxf(infile=None, outfile=None, verbose=False):
+	"""Get chromosome names from the GFF/GTF file."""
+	if verbose:
+		print(f"Extracting chromosome names from {infile}...")
+
+	chroms = set()
+	with open(infile, 'r') as f:
+		for line in f:
+			if line.startswith('#'): continue
+			parts = line.split('\t', 1)
+			if parts:
+				chroms.add(parts[0])
+
+	# Sort and write
+	sorted_chroms = sorted(list(chroms))
+	with open(outfile, 'w') as out:
+		for chrom in sorted_chroms:
+			out.write(f"{chrom}\n")
+
+	if verbose > 1:
+		print(f"Written {len(sorted_chroms)} chromosomes to {outfile}")
+
+def get_intron_length_q(infile=None, fmt=None, q=0.75, verbose=False):
+	"""
+	Compute the q-th quantile of intron lengths from the annotation file.
+	This avoids the need for bedtools complement and chromosome sizes.
+	"""
+	if verbose > 0:
+		print(f"Calculating {q}-th quantile of intron lengths directly from {fmt} file...")
+
+	transcript_exons = collections.defaultdict(list)
+
+	# Simple parsing assuming standard GTF/GFF structure
+	with open(infile, 'r') as f:
+		for line in f:
+			if line.startswith('#'): continue
+			parts = line.strip().split('\t')
+			if len(parts) < 9: continue
+
+			feature_type = parts[2]
+			if feature_type != 'exon': continue
+
+			chrom = parts[0]
+			start = int(parts[3])
+			end = int(parts[4])
+			# strand = parts[6]
+			attributes = parts[8]
+
+			tid = None
+			if fmt == 'gtf':
+				# Parse transcript_id
+				if 'transcript_id' in attributes:
+					try:
+						# attributes usually: key "value"; key "value";
+						# Simple split might fail on semicolons in values, but standard GTF is usually fine.
+						for attr in attributes.split(';'):
+							attr = attr.strip()
+							if attr.startswith('transcript_id'):
+								# handle both 'transcript_id "X"' and 'transcript_id X'
+								tid = attr.split(' ', 1)[1].replace('"', '').replace("'", "")
+								break
+					except:
+						pass
+			elif fmt == 'gff':
+				# Parse Parent
+				if 'Parent=' in attributes:
+					try:
+						for attr in attributes.split(';'):
+							attr = attr.strip()
+							if attr.startswith('Parent='):
+								tid = attr.split('=')[1]
+								break
+					except:
+						pass
+
+			if tid:
+				transcript_exons[tid].append((start, end))
+
+	intron_lengths = []
+
+	for tid, exons in transcript_exons.items():
+		if len(exons) < 2:
+			continue
+
+		# Sort exons by start position
+		exons.sort()
+
+		# Calculate gaps
+		for i in range(len(exons) - 1):
+			# Intron is between end of current exon and start of next exon
+			# exons are (start, end) inclusive 1-based (standard GFF/GTF)
+			# Intron starts at end1 + 1 and ends at start2 - 1
+			# Length = (start2 - 1) - (end1 + 1) + 1 = start2 - end1 - 1
+
+			gap = exons[i+1][0] - exons[i][1] - 1
+			if gap > 0:
+				intron_lengths.append(gap)
+
+	if not intron_lengths:
+		if verbose:
+			print("No introns found!")
+		return 0
+
+	q_val = np.quantile(intron_lengths, q)
+	return int(q_val)
