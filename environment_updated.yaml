@@ -5,23 +5,28 @@ channels:
   - nodefaults
 dependencies:
   - python=3.9
+  # Compilers (Required so MACS2 can compile itself on any machine)
+  - gcc_linux-64
+  - gxx_linux-64
+
   # Core tools
   - bedtools=2.31
-  - pybedtools  # <--- Added this (installs pre-compiled, no gcc errors!)
+  - pybedtools
   - gffutils=0.12
   - samtools=1.19
   - pysam=0.22
-  - macs2       # <--- Moved back to conda (precompiled) as per user request
 
   # Data Science & Utils
   - numpy=1.26
   - pandas=2.1
-  - scipy=1.13       # Added (was in the long list, usually needed if pandas/numpy are there)
+  - scipy=1.13
   - rich=13
-  - tqdm        # Added (was in the pip list, available on conda)
-  - pyyaml      # Added for geneext.config
+  - tqdm
+  - pyyaml
 
-  # PIP packages (Keep this for things not on Conda)
+  # PIP packages
   - pip
   - pip:
-    - peaks2utr  # <--- Was in the previous file, likely specific to this project
+    # Force MACS2 to compile from source (avoids broken binary)
+    - MACS2==2.2.9.1 --no-binary MACS2
+    - peaks2utr
