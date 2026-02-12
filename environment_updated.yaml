@@ -9,17 +9,17 @@ dependencies:
   - gcc_linux-64
   - gxx_linux-64
   # Core tools
-  - bedtools
+  - bedtools=2.31
   - pybedtools  # <--- Added this (installs pre-compiled, no gcc errors!)
-  - gffutils
-  - samtools
-  - pysam
+  - gffutils=0.12
+  - samtools=1.19
+  - pysam=0.22
 
   # Data Science & Utils
-  - numpy
-  - pandas
-  - scipy       # Added (was in the long list, usually needed if pandas/numpy are there)
-  - rich
+  - numpy=1.26
+  - pandas=2.1
+  - scipy=1.13       # Added (was in the long list, usually needed if pandas/numpy are there)
+  - rich=13
   - tqdm        # Added (was in the pip list, available on conda)
   - pyyaml      # Added for geneext.config
 
