@@ -1463,8 +1463,10 @@ def check_gene_exons(infile, infmt='gtf', output_file='genes_with_missing_exons.
 		print(f'WARNING: {len(genes_with_missing_exons)} genes with missing exons! Written to: {output_file}')
 	# Apply fix for genes with missing exons
 	if genes_with_missing_exons:
-		for gene_id in genes_with_missing_exons:
-			add_missing_exons(gene_id,db = db)
+		# Since add_missing_exons currently just raises an error, we can just raise a collective error here
+		raise NotImplementedError(f"{len(genes_with_missing_exons)} genes are missing exons! List written to {output_file}. You need to either remove these genes or add exons manually!")
+		#for gene_id in genes_with_missing_exons:
+		#	add_missing_exons(gene_id,db = db)
 
 def add_gene_features(infile = None,outfile = None, infmt = None,verbose = False):
 	# TODO: for multi-transcript files, the gene should be written only once!
