@@ -816,7 +816,7 @@ def extend_gff(db,extend_dictionary,output_file,extension_mode,tag,verbose = Fal
 			
 			######### Write the gene to the file as is ############
 			# CAVE: what to do here?
-			elif not feature.id in extend_dictionary.keys(): # write the gene and all children as they are in the file:
+			elif (not feature.id in extend_dictionary.keys()) or (not n_exons): # write the gene and all children as they are in the file:
 				written_exons = []
 				written_features = [] # this is to check whether the feature has already been written 
 				#if verbose:
@@ -1420,7 +1420,7 @@ def get_featuretypes(infile = None):
 
 
 
-def check_gene_exons(infile, infmt='gtf', output_file='genes_with_missing_exons.txt',verbose = 0):
+def check_gene_exons(infile, infmt='gtf', output_file='genes_with_missing_exons.txt',verbose = 0,skip_genes_with_no_exons=False):
 	"""
 	Load the GTF/GFF file using gffutils and check if every gene has children exons.
 	If exons are missing for any gene, copy CDS features and use them as exons.

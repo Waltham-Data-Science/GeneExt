@@ -11,7 +11,7 @@ Tool dependencies can be installed with `conda` or `mamba`:
 
 ```bash
 # create environment
-conda env create -n geneext -f environment_updated.yaml
+export CFLAGS="-fno-finite-math-only" && conda env create -n geneext -f environment_updated.yaml
 
 # activate environment
 conda activate geneext
