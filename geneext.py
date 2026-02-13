@@ -61,6 +61,7 @@ parser.add_argument('-subsamplebam','--subsamplebam',default = None, help = 'If 
 parser.add_argument('-keep','--keep_intermediate_files', action='store_true', help = 'Use this to keep .bam and other temporary files in the a temporary directory. Useful for troubleshooting.')
 #parser.add_argument('--estimate', action='store_true', help = 'Use this to just estimate intergenic read proportion.\nUseful for quick checking intergenic mapping rate.')
 parser.add_argument('--onlyfix', action='store_true', help = 'If set, GeneExt will only try to fix the annotation, no extension is performed.')
+parser.add_argument('-skipGenesWithNoExons', action='store_true', help = 'If set, genes with no exons will be skipped during the check (and thus not extended) instead of raising an error.')
 parser.add_argument('-force','--force', action='store_true', help = 'If set, GeneExt will ignore previously computed files and will re-run everythng from scratch.')
 parser.add_argument('-rerun','--rerun', action='store_true', help = 'If set, GeneExt will try to re-run the analysis using previously computed files it finds in the temporary directory (subsampled data, MACS2 results, peaks with coverage etc.).')
 
@@ -292,12 +293,12 @@ def report_estimate():
 
     # depends on whether it was called only multple files or ont 
 
-def PIPELINE_run_genefile_fix(genefile,infmt,tempdir,verbose,console):
+def PIPELINE_run_genefile_fix(genefile,infmt,tempdir,verbose,console,skip_genes_with_no_exons=False):
     # Returns the name of the fixed genome annotation file 
 
     # Given an input file, check if it's missing "gene" and "transcript" features, if so, fix it and output an updated file name 
     features = helper.get_featuretypes(genefile)
-    helper.check_gene_exons(genefile,infmt = infmt,verbose = verbose)
+    helper.check_gene_exons(genefile,infmt = infmt,verbose = verbose,skip_genes_with_no_exons=skip_genes_with_no_exons)
     if not 'transcript' in features:
         console.print('Genome annotation warning: Could not find "transcript" features in %s! Trying to fix ...' % genefile,style = 'white')
         if 'mRNA' in features:
@@ -397,6 +398,9 @@ if __name__ == "__main__":
 
     # onlyfix
     do_onlyfix = args.onlyfix
+
+    # skip genes with no exons
+    do_skip_genes_with_no_exons = args.skipGenesWithNoExons
 
 
     class Logger(object):
@@ -554,7 +558,7 @@ if __name__ == "__main__":
             print('Found fixed genome file: %s' % fixed_file_name)
             genefile = fixed_file_name
         else:
-            genefile = PIPELINE_run_genefile_fix(genefile,infmt,tempdir = tempdir,verbose = verbose,console = console)
+            genefile = PIPELINE_run_genefile_fix(genefile,infmt,tempdir = tempdir,verbose = verbose,console = console,skip_genes_with_no_exons=do_skip_genes_with_no_exons)
 
         if do_longest:
             
